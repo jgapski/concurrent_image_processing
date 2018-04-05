@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, collection/1]).
+-export([start_link/0, add_collection/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -20,13 +20,13 @@ init([]) ->
     process_flag(trap_exit, true),
     {ok, []}.
 
-collection(Name) ->
-    gen_server:call(?SERVER,{collection, Name}).
+add_collection(Path) ->
+    gen_server:call(?SERVER,{add_collection, Path}).
 
-handle_call({collection, Name}, _From, State) ->
-    {ok, Pid} = cimp_collection_sup:start_link(),
+handle_call({add_collection, Path}, _From, State) ->
+    {ok, Pid} = cimp_engyne_sup:add_collection(Path),
     Reply = ok,
-    {reply, Reply, [{Name, Pid}|State]}.
+    {reply, Reply, [{Pid, Path}|State]}.
 
 
 handle_cast(_Msg, State) ->

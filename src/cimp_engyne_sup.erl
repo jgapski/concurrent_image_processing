@@ -3,7 +3,7 @@
 -behaviour(supervisor).
 
 %% API
--export([start_link/0]).
+-export([start_link/0, add_collection/1]).
 
 %% Supervisor callbacks
 -export([init/1]).
@@ -21,5 +21,12 @@ init([]) ->
 %%% Internal functions
 %%%===================================================================
 
-%collection(Name) ->
+add_collection(Path) ->
+        Collection = {Path,
+             {cimp_collection_sup, start_link, [Path]},
+             permanent, %to change
+             5000, %to change
+             supervisor, 
+             [cimp_collection_sup]},
+    supervisor:start_child(?MODULE, Collection).
     
